@@ -10,7 +10,7 @@ layout: default.njk
     {% for print in collections.prints %}
     <li class="box-item is-draft">
       <a class="print-thumb" href="{{ print.url }}">
-        <span class="thumb-paper grain"><img src="{{ print.data.image }}"></span>
+        <span class="thumb-paper grain"><img src="{{ print.data.image }}" alt="{{ print.data.image_description }}" ></span>
         <span class="thumb-number" aria-hidden="true">No. {{ loop.index }}</span>
           <span class="thumb-hint" aria-hidden="true">turn over</span>
         </span>

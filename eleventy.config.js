@@ -1,10 +1,15 @@
 const { feedPlugin } = require("@11ty/eleventy-plugin-rss");
+const { eleventyImageTransformPlugin } = require("@11ty/eleventy-img");
+
 
 module.exports = function(eleventyConfig) {
   // Pass through assets
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
 
-  // Date formatting filter
+  // make images better
+  eleventyConfig.addPlugin(eleventyImageTransformPlugin);
+  
+  // Date formatting filter with short month names
   eleventyConfig.addFilter("prettyDate", (dateObj) => {
     // If it's a string, parse it
     const date = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
@@ -16,7 +21,7 @@ module.exports = function(eleventyConfig) {
     });
   });
 
-  // Date formatting filter
+  // Date formatting filter with long month names
   eleventyConfig.addFilter("prettyDateLong", (dateObj) => {
     // If it's a string, parse it
     const date = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
@@ -28,6 +33,7 @@ module.exports = function(eleventyConfig) {
     });
   });
 
+  // just filter the year from a date object
   eleventyConfig.addFilter("year", (dateObj) => {
     const date = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
     return date.getFullYear();
