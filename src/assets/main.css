@@ -1,0 +1,554 @@
+/* photostori.es v2. Every photograph has a back.
+   Mobile first, no frameworks, no web fonts. */
+
+:root {
+  --bg: #F6F1E7;        /* cream */
+  --paper: #FFFCF7;     /* print border */
+  --card: #FBF6EA;      /* back of the print */
+  --ink: #2A2522;
+  --muted: #6E655C;
+  --stamp: #B5533C;     /* faded red postmark */
+  --line: #E3D9C8;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --mono: ui-monospace, Menlo, "SF Mono", Consolas, "Liberation Mono", monospace;
+  --measure: 640px;
+  --print-max: 820px;
+  --box-max: 1100px;
+  --turn: 600ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 100%;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0 1rem 3rem;
+}
+
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+a:hover, a:focus { text-decoration-color: var(--stamp); }
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  background: var(--line);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Small caps and labels */
+
+.label,
+.mono {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.smallcaps {
+  font-variant-caps: small-caps;
+  letter-spacing: 0.05em;
+}
+
+/* Grain: the SVG filter lives in base.njk. Applied only to paper, never to the whole page. */
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter: url(#grain);
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+}
+
+/* Header and nav */
+
+.site-header {
+  max-width: var(--box-max);
+  margin: 0 auto;
+  padding: 1.5rem 0 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.site-name {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+.site-name a { text-decoration: none; }
+.site-name a:hover { text-decoration: underline; }
+
+.site-sub {
+  margin: 0.15rem 0 0.9rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-style: italic;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.site-nav a { text-decoration: none; color: var(--ink); padding-bottom: 2px; }
+.site-nav a:hover { text-decoration: underline; text-decoration-color: var(--stamp); }
+.site-nav a[aria-current="page"] {
+  border-bottom: 1px solid var(--stamp);
+}
+
+/* Draft label */
+
+.draft-label {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--stamp);
+  color: var(--stamp);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: rotate(-2deg);
+}
+
+/* Home: the box */
+
+.box {
+  max-width: var(--box-max);
+  margin: 0 auto;
+  padding-top: 2rem;
+}
+
+.box-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2.5rem 2rem;
+  grid-template-columns: 1fr;
+}
+
+.print-thumb {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.thumb-paper {
+  position: relative;
+  display: block;
+  padding: 4% 4% 10%;
+  background: var(--paper);
+  box-shadow:
+    0 1px 1px rgba(42, 37, 34, 0.06),
+    0 6px 18px rgba(42, 37, 34, 0.10);
+  transition: transform var(--turn) var(--ease), box-shadow var(--turn) var(--ease);
+}
+.thumb-paper img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+.thumb-number,
+.thumb-hint {
+  position: absolute;
+  bottom: 3%;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.thumb-number { left: 4%; }
+.thumb-hint {
+  right: 4%;
+  color: var(--stamp);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.thumb-hint::before { content: "\2192\00A0"; }
+.print-thumb:hover .thumb-paper,
+.print-thumb:focus-visible .thumb-paper {
+  transform: translateY(-2px) rotate(-0.4deg);
+  box-shadow:
+    0 1px 1px rgba(42, 37, 34, 0.06),
+    0 12px 28px rgba(42, 37, 34, 0.14);
+}
+.print-thumb:hover .thumb-hint,
+.print-thumb:focus-visible .thumb-hint { opacity: 1; }
+@media (hover: none) {
+  .thumb-hint { opacity: 0.8; }
+}
+
+.thumb-caption {
+  margin: 0.8rem 0 0;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.4;
+  font-variant-caps: small-caps;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+.thumb-caption .thumb-no {
+  font-family: var(--mono);
+  font-variant-caps: normal;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-right: 0.5em;
+}
+.thumb-caption .draft-label { margin-left: 0.4em; }
+
+.is-draft .thumb-paper img { opacity: 0.85; }
+
+/* Story page: the print */
+
+.print {
+  max-width: var(--print-max);
+  margin: 2rem auto 0;
+}
+
+.print-stage { position: relative; }
+
+/* Default: stacked. Front, a thin rule, then the back. Used when JS is off
+   or the reader prefers reduced motion. Nothing is ever hidden here. */
+
+.print-card {
+  display: grid;
+  grid-template-columns: 100%;
+  row-gap: 3rem;
+}
+
+.print-face { position: relative; }
+
+.print-front {
+  padding: 4% 4% 9%;
+  background: var(--paper);
+  box-shadow:
+    0 1px 1px rgba(42, 37, 34, 0.06),
+    0 10px 30px rgba(42, 37, 34, 0.12);
+}
+.print-front figure { margin: 0; }
+.print-front img { width: 100%; }
+.front-number {
+  position: absolute;
+  right: 4%;
+  bottom: 3%;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.print-back {
+  position: relative;
+  padding: 1.5rem 1.25rem 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow:
+    0 1px 1px rgba(42, 37, 34, 0.06),
+    0 10px 30px rgba(42, 37, 34, 0.12);
+}
+/* the thin rule between front and back in the stacked layout */
+.print-back::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: -1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.back-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.back-line .back-no { color: var(--ink); }
+
+.back-title {
+  margin: 0 0 1.25rem;
+  padding-right: 6.5rem; /* room for the postmark */
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0.005em;
+}
+
+.postmark {
+  position: absolute;
+  top: 2.4rem;
+  right: 0.9rem;
+  width: 6.4rem;
+  height: auto;
+  color: var(--stamp);
+  opacity: 0.75;
+  transform: rotate(-9deg);
+  pointer-events: none;
+}
+
+.back-body {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+.back-body p { margin: 0 0 1.1em; }
+.back-body p:first-child { font-style: italic; }
+.back-body a { text-decoration-color: var(--stamp); }
+
+.back-foot {
+  margin-top: 1.5rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.back-foot p { margin: 0 0 0.35rem; }
+.back-foot .label { margin-right: 0.5em; }
+.back-foot a { color: var(--ink); text-decoration: none; }
+.back-foot a:hover { text-decoration: underline; }
+
+/* Controls under the print */
+
+.print-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-top: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+}
+
+.turn {
+  display: none; /* shown only when the flip is available */
+  align-items: center;
+  gap: 0.5em;
+  margin: 0;
+  padding: 0.55em 1em;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.turn:hover { background: var(--ink); color: var(--paper); }
+.turn::before {
+  content: "\21BB"; /* clockwise arrow */
+  font-size: 1.1em;
+  line-height: 1;
+}
+.turn[aria-pressed="true"]::before { content: "\21BA"; }
+
+.share {
+  margin: 0;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.share a { color: var(--ink); text-decoration: none; }
+.share a:hover { text-decoration: underline; text-decoration-color: var(--stamp); }
+.share .sep { margin: 0 0.5em; color: var(--line); }
+.share-status { margin-left: 0.75em; color: var(--stamp); text-transform: none; }
+
+.print-foot {
+  max-width: var(--print-max);
+  margin: 2.5rem auto 0;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.print-foot a { text-decoration: none; color: var(--muted); }
+.print-foot a:hover { color: var(--ink); text-decoration: underline; }
+
+/* The flip. Only with JS and only when motion is welcome. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .print-stage { perspective: 2400px; }
+  .print-card {
+    row-gap: 0;
+    transform-style: preserve-3d;
+    transition: transform var(--turn) var(--ease);
+  }
+  .print-card.is-turned { transform: rotateY(180deg); }
+  .print-face {
+    grid-area: 1 / 1;
+    align-self: start;
+    max-height: var(--face-h, none);
+    overflow: hidden;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    /* visibility switches at the midpoint of the turn, when the card is edge-on,
+       so the turned-away face can never show through (some browsers paint
+       filtered children even when the parent's backface is hidden) */
+    transition:
+      max-height var(--turn) var(--ease),
+      visibility 0s linear calc(var(--turn) / 2);
+  }
+  .print-card:not(.is-turned) .print-back,
+  .print-card.is-turned .print-front { visibility: hidden; }
+  .print-back { transform: rotateY(180deg); }
+  .print-back::before { display: none; }
+  .turn { display: inline-flex; }
+}
+
+/* Plain pages (About, Send us a photograph) */
+
+.page {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding-top: 2rem;
+}
+.page h1 {
+  margin: 0 0 1.25rem;
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.page p { margin: 0 0 1.2em; font-size: 1.0625rem; }
+
+/* Footer */
+
+.site-footer {
+  max-width: var(--box-max);
+  margin: 3rem auto 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+.site-footer p { margin: 0; }
+.site-footer a { color: var(--muted); text-decoration: none; }
+.site-footer a:hover { color: var(--ink); text-decoration: underline; }
+
+/* Wider screens */
+
+@media (min-width: 560px) {
+  .box-list { grid-template-columns: repeat(2, 1fr); }
+  .print-back { padding: 2rem 2.25rem 1.75rem; }
+  .back-title { font-size: 1.75rem; }
+  .postmark { top: 2.8rem; right: 1.5rem; width: 7.2rem; }
+}
+
+@media (min-width: 640px) {
+  body { padding: 0 2rem 4rem; }
+  .site-header { padding-top: 2.25rem; }
+  .site-name { font-size: 1.75rem; }
+  .page h1 { font-size: 2.1rem; }
+  .box { padding-top: 3rem; }
+  .print { margin-top: 3rem; }
+}
+
+@media (min-width: 900px) {
+  .box-list { grid-template-columns: repeat(3, 1fr); gap: 3rem 2.5rem; }
+}
+
+/* Print to paper: the front on page one, the back on page two, card sized.
+   This is the seed of the zines. */
+
+@media print {
+  @page { size: A5 landscape; margin: 10mm; }
+
+  html, body { background: #fff; color: #000; padding: 0; margin: 0; }
+  .site-header, .site-footer, .print-controls, .print-foot, .grain::after, .svg-defs { display: none !important; }
+
+  .print { max-width: none; margin: 0; }
+  .print-stage { perspective: none; }
+  .print-card {
+    display: block;
+    transform: none !important;
+    transition: none;
+  }
+  .print-face {
+    position: static;
+    visibility: visible !important;
+    max-height: none !important;
+    overflow: visible;
+    transform: none !important;
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-front {
+    break-after: page;
+    page-break-after: always;
+    padding: 6mm 6mm 10mm;
+    width: 190mm;
+    height: 128mm;
+    margin: 0 auto;
+    background: var(--paper);
+  }
+  .print-front figure { height: 100%; display: flex; align-items: center; justify-content: center; }
+  .print-front img { max-height: 108mm; width: auto; max-width: 100%; margin: 0 auto; }
+  .front-number { right: 6mm; bottom: 3mm; }
+
+  .print-back {
+    break-before: page;
+    page-break-before: always;
+    width: 190mm;
+    min-height: 128mm;
+    margin: 0 auto;
+    padding: 8mm 10mm;
+    border: 1px solid var(--line);
+    background: var(--card);
+  }
+  .print-back::before { display: none; }
+  .back-body { font-size: 10.5pt; line-height: 1.5; }
+  .back-title { font-size: 16pt; }
+  .back-body a { text-decoration: none; color: #000; }
+  .postmark { opacity: 0.8; }
+}

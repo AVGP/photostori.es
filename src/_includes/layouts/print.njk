@@ -1,0 +1,74 @@
+---
+layout: default.njk
+---
+
+<article class="print" id="print">
+  <div class="print-stage">
+    <div class="print-card" id="print-card" style="--face-h: 610px;">
+
+      
+      <section class="print-face print-front grain" id="front" aria-label="Front of the print" style="">
+        <figure>
+          <img src="{{ image }}" alt="Placeholder: a photograph by Martin for this story goes here" width="1200" height="800">
+          <figcaption class="front-number">No. {{ number }}</figcaption>
+        </figure>
+      </section>
+
+      
+      <section class="print-face print-back grain" id="back" aria-label="Back of the print" inert="" style="">
+        <header class="back-head">
+          <p class="back-line">
+            <span class="back-no">No. {{ number }}</span><span class="back-place">Sent from {{ location }}</span>
+            <time class="back-date" datetime="{{ date }}">{{ date | prettyDateLong }}</time><span class="draft-label">Draft</span>
+          </p>
+          <h1 class="back-title">{{ title }}</h1>
+          
+          <svg class="postmark" viewBox="0 0 200 120" aria-hidden="true" focusable="false">
+            <defs>
+              <path id="pm-top" d="M16,60 a44,44 0 1,1 88,0"></path>
+              <path id="pm-bottom" d="M22,60 a38,38 0 0,0 76,0"></path>
+            </defs>
+            <g fill="none" stroke="currentColor" stroke-linecap="round">
+              <circle cx="60" cy="60" r="56" stroke-width="1.6"></circle>
+              <circle cx="60" cy="60" r="52" stroke-width="0.9"></circle>
+              <path stroke-width="1.6" d="M122,44 c10,-6 20,6 30,0 s20,6 30,0 s12,-4 14,-5"></path>
+              <path stroke-width="1.6" d="M122,60 c10,-6 20,6 30,0 s20,6 30,0 s12,-4 14,-5"></path>
+              <path stroke-width="1.6" d="M122,76 c10,-6 20,6 30,0 s20,6 30,0 s12,-4 14,-5"></path>
+            </g>
+            <g fill="currentColor" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="9" letter-spacing="2.4">
+              <text><textPath href="#pm-top" startOffset="50%" text-anchor="middle">PHOTOSTORI.ES</textPath></text>
+              <text font-size="7.5" letter-spacing="2"><textPath href="#pm-bottom" startOffset="50%" text-anchor="middle">THE BACK</textPath></text>
+              <text x="60" y="57" text-anchor="middle" font-size="11" letter-spacing="1.5">{{ date | prettyDate }}</text>
+              <text x="60" y="71" text-anchor="middle" font-size="11" letter-spacing="1.5">{{ date | year }}</text>
+            </g>
+          </svg>
+        </header>
+
+        <div class="back-body">
+          <p>PHOTOSTORI.ES THE BACK {{ date | prettyDate }}</p>
+          {{ content | safe }}
+        </div>
+
+        <footer class="back-foot">
+          <p class="back-camera"><span class="label">Camera</span> {{ camera }}</p>
+          <p class="back-credits">
+            <span class="label">Photograph</span> <a href="https://photostori.es/">Martin Splitt</a>
+            &nbsp;&nbsp;
+            <span class="label">Words</span> <a href="https://photostori.es/">Eva Mermingi</a>
+          </p>
+        </footer>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="print-controls">
+    <button type="button" class="turn" id="turn" aria-pressed="false">Turn over</button>
+    <p class="share">
+      Share
+      <a href="https://photostori.es/stories/seeing-beyond-duty/" data-share="">the front</a><span class="sep" aria-hidden="true">·</span><a href="https://photostori.es/stories/seeing-beyond-duty/#back" data-share="">the back</a>
+      <span class="share-status" role="status" aria-live="polite"></span>
+    </p>
+  </div>
+</article>
+<script src="/assets/js/print.js" defer></script>

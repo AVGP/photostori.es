@@ -1,0 +1,28 @@
+---
+layout: default.njk
+---
+
+<h2>Prints</h2>
+
+<section class="box" id="prints">
+  <h1 class="visually-hidden">Prints</h1>
+  <ul class="box-list">
+    {% for print in collections.prints %}
+    <li class="box-item is-draft">
+      <a class="print-thumb" href="{{ print.url }}">
+        <span class="thumb-paper grain"><img src="{{ print.data.image }}"></span>
+        <span class="thumb-number" aria-hidden="true">No. {{ loop.index }}</span>
+          <span class="thumb-hint" aria-hidden="true">turn over</span>
+        </span>
+        <h2 class="thumb-caption">
+          <span class="thumb-no">No. {{ loop.index }}</span>
+          {{ print.data.title }}
+          <span class="draft-label">Draft</span>
+        </h2>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<p>Photographs, Martin Splitt. The back, Eva Mermingi.</p>
