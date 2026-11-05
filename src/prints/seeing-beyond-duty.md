@@ -6,7 +6,7 @@ image: /assets/images/seeing-beyond-duty.jpg
 date: 2026-11-06
 number: 1
 location: Zurich
-camera: TBD
+camera: Sony Alpha 6600, Zeiss 24-70mm f/4
 image_description: Sun shining through the colorful autumn leaves in the forest.
 ---
 
