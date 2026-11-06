@@ -552,3 +552,21 @@ img {
   .back-body a { text-decoration: none; color: #000; }
   .postmark { opacity: 0.8; }
 }
+
+/* The back: mark as a small label, one card height both sides, credits pinned to the bottom. */
+
+.back-body p.back-mark {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .print-face { align-self: stretch; max-height: none; }
+  .print-back { display: flex; flex-direction: column; }
+  .back-body { flex: 1 0 auto; }
+}
