@@ -570,3 +570,9 @@ img {
   .print-back { display: flex; flex-direction: column; }
   .back-body { flex: 1 0 auto; }
 }
+
+/* The front: photograph centred in whatever height the card has. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .print-front { display: flex; flex-direction: column; justify-content: center; }
+}
